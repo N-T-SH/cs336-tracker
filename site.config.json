@@ -8,10 +8,10 @@
   "github_repo_url": "https://github.com/N-T-SH/cs336-tracker/",
   "cs336_course_url": "https://cs336.stanford.edu/",
   "week_labels": {
-    "1": "Tokenization & Data",
-    "2": "Transformer Architecture",
-    "3": "Training & Optimization",
-    "4": "Scaling & Evaluation",
-    "5": "Final Lap"
+    "1": "Basics",
+    "2": "Systems",
+    "3": "Scaling Laws",
+    "4": "Data",
+    "5": "Alignment"
   }
 }

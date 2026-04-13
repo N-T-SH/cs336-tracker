@@ -9,16 +9,16 @@
     "github_repo_url": "https://github.com/N-T-SH/cs336-tracker/",
     "cs336_course_url": "https://cs336.stanford.edu/",
     "week_labels": {
-      "1": "Tokenization & Data",
-      "2": "Transformer Architecture",
-      "3": "Training & Optimization",
-      "4": "Scaling & Evaluation",
-      "5": "Final Lap"
+      "1": "Basics",
+      "2": "Systems",
+      "3": "Scaling Laws",
+      "4": "Data",
+      "5": "Alignment"
     }
   },
   "notes": [
     {
-      "slug": "2026-04-13_tokenization-bpe",
+      "slug": "2026-04-13_intro_tokenization",
       "frontmatter": {
         "title": "Intro & Tokenization",
         "date": "2026-04-13",
@@ -32,7 +32,7 @@
         "cs336_topic": "Tokenization",
         "cover_image": "/attachments/Pasted%20image%2020260413212008.png"
       },
-      "content": "\n## Architecture Review\n\n![Pasted image 20260413212008.png](/attachments/Pasted%20image%2020260413212008.png)\n\n# BPE Tokenization\n\n\n\nToday I learned about Byte Pair Encoding (BPE), the algorithm used by most modern language models for tokenization.\n\n## Key Concepts\n\n- **Unicode handling**: Breaking text into bytes first, then merging\n- **Vocabulary size trade-offs**: More tokens = shorter sequences but larger embedding matrix\n- **Special tokens**: `[BOS]`, `[EOS]`, `[PAD]`, `[UNK]`\n\n## Implementation Notes\n\nThe basic algorithm:\n1. Start with character-level tokens (bytes)\n2. Count all adjacent pairs\n3. Merge the most frequent pair\n4. Repeat until vocabulary size reached\n\n```python\nimport re\nfrom collections import defaultdict\n\ndef get_stats(vocab):\n    pairs = defaultdict(int)\n    for word, freq in vocab.items():\n        symbols = word.split()\n        for i in range(len(symbols) - 1):\n            pairs[(symbols[i], symbols[i+1])] += freq\n    return pairs\n```\n\n## Next Steps\n\n- Implement BPE training on a small corpus\n- Compare GPT-2 tokenizer vs custom trained one\n"
+      "content": "## Logistics:\n- Runnable lecture with env. variables\n- 5 assignments, good for research engineering muscles\n- Prototype locally, then benchmark on clusters\n- AI tool use - self declared - `only in chat mode for pre-req and errors`\n\n## Lecture 1:\n\n### Motivation\n\n- Researchers are disconnected from underlying implementation\n- Abstraction improves productivity but abstractions are leaky\n- Scope for fundamental research\n- We want to work on small models but have to be careful about the point where LLM emergent behavior kicks in\n- Takeaways\n\t- **Mechanics**\n\t- **Mindset** - scaling, squeeze out performance\n\t- **Intuitions** - data and modeling decisions\n\n> Interpretation that **Bitter lesson** means that scale is all that matters, algorithms don't matter is incorrect. Right interpretation is that algorithms at scale is what matters. Accuracy of your model is really a product of your efficiency and the number of resources you put in. Efficiency, if you think about it, is way more important at larger scale.\n\n**What is the best model one can build given a certain compute and data budget?**\n\n### Landscape\n\n- Entropy of English pre-LLM\n- n-gram models for machine translation, etc.\n- 2010s: Seq2seq, Adam optimizer, attention, transformer, MoE, and parallelism papers\n- 2010s: ELMo, BERT, T5 foundation models\n- Post-2010s: Closed scaled models + open models\n\n### Course Components\n\n- Focus on efficiency\n- 5 pillars of the course:\n\n![Pasted image 20260413233041.png](/attachments/Pasted%20image%2020260413233041.png)\n\n**Tokenizer - BPE - more in the lecture**\n\n**Model Architecture**\n\n![Pasted image 20260413212008.png](/attachments/Pasted%20image%2020260413212008.png)\n\n**Variants**:\n- Activation Functions: ReLU\n- Positional encodings: RoPE\n- Normalization: RMS Norm\n- Placement of Norm: pre vs post\n- MLP: Dense, MoE\n- Attention: full, sliding, linear\n- Lower dimensional attention: group-query attention, multi-head latent attention (MLA)\n- State space models and other alternates\n\n**Training Decisions:**\n- Optimizer: ADAM, Muon, SOAP\n- Learning rate schedule: cosine, WSD\n- Batch size\n- Regularization: dropout, weight decay\n- Hyper-parameters: no. of heads, grid search\n\n#### Assignment 1 - Basics: \n- [Handout](https://github.com/stanford-cs336/assignment1-basics/blob/main/cs336_assignment1_basics.pdf)\n- Implement BPE tokenizer, Transformer, cross-entropy, AdamW optimizer, training loop\n- Use PyTorch but not something like it's transformer implementation\n- OpenWeb data and leaderboard to minimize perplexity based on it\n- 90 mins on H100 for benchmarking last years - **validation loss 3.12**\n\n\n#### Systems\n- Kernels - GPU then memory is in different levels of cache that needs to be sent back and forth. How do you organize the compute, even a matrix multiplication, to maximize the utilization of the GPUs by minimizing the data movement? We're going to use Triton\n- Parallelism - Training runs that use 10s of Ks of GPU's\n- Inference - generate tokens given a prompt and model weights. Needed for RL and test time compute. Has two phases pre-fill and decode. Pre-fill can be always at one, decode is autoregressive and hence sequential, throughput becomes memory bound instead of GPU bound.\n- Optimizations like smaller models, speculative decoding\n![Pasted image 20260414000453.png](/attachments/Pasted%20image%2020260414000453.png)\n\n#### Assignment 2 - Systems: \n- [Handout](https://github.com/stanford-cs336/assignment2-systems/blob/main/cs336_spring2025_assignment2_systems.pdf))\n- Implement Kernel, data parallel training, FSDP, optimizer sharding\n- Benchmarking and profiling\n\n#### Scaling Laws:\n- Experiment at small scale, predict loss at large scale\n- DeepMind Chinchilla paper. For every level of compute, you can get the optimal parameter count. Tokens to train on = size of model (no. of parameters) \\* 20\n\n![Pasted image 20260414002027.png](/attachments/Pasted%20image%2020260414002027.png)\n\n#### Assignment 3 - Scaling Laws: \n- [Handout](https://github.com/stanford-cs336/assignment3-scaling/blob/main/cs336_spring2025_assignment3_scaling.pdf)\n- Query a training API with hyper-parameters and get a loss. Then use it to generate a scaling law to give model config given FLOPs budget with target of minimizing loss\n\n#### Data\n- Differentiates models\n![Pasted image 20260414002835.png](/attachments/Pasted%20image%2020260414002835.png)\n\n**Evaluation**:\n- Perplexity\n- MMLU\n- Instruction Following\n- Chain of Thought - Test time compute\n- Full systems - RAG/Agents/etc.\n\n**Data Curation** - Not all data is created equal\n**Data Processing** - Preserve structure, filtering\n\n#### Assignment 4 - Data: \n- [Handout](https://github.com/stanford-cs336/assignment4-data/blob/main/cs336_spring2025_assignment4_data.pdf)\n- Minimize perplexity given token budget by using classifiers for filtering, deduping, etc. \n\n#### Alignment\n- Making a base model useful, right now it just does next token prediction\n\t- follow instructions\n\t- tune the style\n\t- incorporate safety\n- Two phases\n\t- Supervised Fine Tuning - prompt - response pairs + supervised learning - P(response|prompt)\n\t- Learning form feedback - without expensive annotation\n\t\t- Preference Data\n\t\t- Verifiers (Formal for math or code) or (Learned LLM as a judge)\n\t\t- Algorithms - PPO (from RL) or DPO (from preference data) or GRPO (remove value function from PPO)\n\n#### Assignment 5 - Alignment: \n- [Handout](https://github.com/stanford-cs336/assignment5-alignment/blob/main/cs336_spring2025_assignment5_alignment.pdf) and [Safety Supplement](https://github.com/stanford-cs336/assignment5-alignment/blob/main/cs336_spring2025_assignment5_supplement_safety_rlhf.pdf)\n- Implement SFT, DPO, GRPO\n\n\n#### "
     }
   ],
   "streak": {
@@ -47,7 +47,7 @@
       {
         "date": "2026-04-13",
         "hasNote": true,
-        "isFuture": true
+        "isFuture": false
       },
       {
         "date": "2026-04-14",
