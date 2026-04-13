@@ -130,7 +130,7 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }:
     <section style={{ borderTop: '1px solid #e6e8ea' }} id="note-viewer">
       {/* ── Note feed (always visible when no note selected) ── */}
       {!selectedNote && (
-        <div className="max-w-[700px] mx-auto px-6 py-8" id="notes">
+        <div className="max-w-[700px] mx-auto px-6 pt-6 pb-8" id="notes">
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             All Notes
           </span>

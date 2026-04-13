@@ -119,7 +119,7 @@ export default function Dashboard({ data, onNoteSelect, isNoteOpen = false }: Da
   for (let i = 0; i < cells.length; i += COLS) rows.push(cells.slice(i, i + COLS));
 
   return (
-    <section className="max-w-[700px] mx-auto px-6 py-12">
+    <section className="max-w-[700px] mx-auto px-6 pt-12 pb-0">
       {/* About */}
       <div className="mb-10">
         <h1 className="text-3xl font-black text-[#2c2f30] mb-3 leading-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -129,7 +129,7 @@ export default function Dashboard({ data, onNoteSelect, isNoteOpen = false }: Da
       </div>
 
       {/* ── Activity grid ─────────────────────────────────────────────────── */}
-      <div className="mb-10 pb-10" style={{ borderBottom: '1px solid #e6e8ea' }}>
+      <div className={`pb-6 ${todayNote ? 'mb-6' : 'mb-0'}`} style={{ borderBottom: '1px solid #e6e8ea' }}>
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setGridOpen(o => !o)}
