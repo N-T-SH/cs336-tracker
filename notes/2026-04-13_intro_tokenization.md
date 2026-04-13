@@ -149,4 +149,23 @@ cover_image: "![[Pasted image 20260413212008.png]]"
 
 - Turning unicode strings into integers and back
 - Vocab size is the range
-- 
+- Spaces are part of tokens unlike NLP n-grams where they're taken out. hello and ' 'hello are two different tokens.
+- In BPE pre-tokenizer adds the space
+- Compression ratio for GPT-2 is 1.6 for bytes represented per token
+
+#### BPE
+- Simplest version is **character based** so just convert each character to it's code point representation. Problem is some code points are really large. Because chars are rare, vocab is inefficiently used and compression ratio is 1.5
+- **Byte based** using UTF8 - everything is bw 0 to 255. Problem is very long sequences, compression ratio is 1 and hence inefficient
+- **Word based** - like in NLP, each word is a token. Massive vocab size, new input with new word can't be tokenized and is a problem
+- **Byte Pair Encoding** - Train tokenizer on raw text, common ones are single tokens, rare ones are multiple tokens. GPT-2 breaks down into segments then BPE.
+- Start with each byte is a token, then successively merge the most common ones. Start with 2 integers that represent bytes or their merges
+- Count up occurrences of pairs of bytes. Pick highest and merge [116, 104] -> 256 (new vocab integer), replace pair with new index
+![[Pasted image 20260414014427.png]]
+- Do it recursively and the indices size reduces, i.e. compression improves
+![[Pasted image 20260414014639.png]]
+- It's inefficient, needs improvement in implementation
+
+#### Summary
+- Tokenizer - strings <-> indices
+- BPE is effective
+- Is a necessary evil compared to bytes
