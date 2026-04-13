@@ -1,17 +1,17 @@
 {
   "site_title": "CS336 × 33.6",
   "about_line_1": "Working through Stanford CS336 — Language Modeling from Scratch — in 33.6 days.",
-  "about_line_2": "Documenting every session publicly as I build a language model from the ground up.",
-  "start_date": "2025-06-01",
+  "about_line_2": "Documenting my progress below",
+  "start_date": "2026-04-13",
   "total_days": 33.6,
-  "expected_note_count": 33,
-  "github_repo_url": "https://github.com/username/cs336-notes",
-  "cs336_course_url": "https://stanford-cs336.github.io/spring2025/",
+  "expected_note_count": 34,
+  "github_repo_url": "https://github.com/N-T-SH/cs336-tracker/",
+  "cs336_course_url": "https://cs336.stanford.edu/",
   "week_labels": {
     "1": "Tokenization & Data",
     "2": "Transformer Architecture",
     "3": "Training & Optimization",
     "4": "Scaling & Evaluation",
-    "5": "Buffer / Review"
+    "5": "Final Lap"
   }
 }
