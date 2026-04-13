@@ -8,34 +8,48 @@ interface HeaderProps {
 
 export default function Header({ config }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-white tracking-tight">
-              {config.site_title}
-            </span>
-          </div>
-          <nav className="flex items-center gap-6">
+    <header className="w-full top-0 sticky z-50 bg-white shadow-sm">
+      <nav className="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
+        {/* Logo */}
+        <div className="flex items-center">
+          <span className="text-2xl font-black tracking-tighter text-slate-900 title-chromatic select-none">
+            {config.site_title}
+          </span>
+        </div>
+
+        {/* Nav + actions */}
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex gap-8 items-center">
             <a
-              href={config.github_repo_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-slate-400 hover:text-white transition-colors"
+              href="#notes"
+              className="text-sm font-bold border-b-2 transition-transform active:scale-95"
+              style={{ color: '#652fe7', borderColor: '#652fe7' }}
             >
-              GitHub
+              Notes
             </a>
             <a
               href={config.cs336_course_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-slate-400 hover:text-white transition-colors"
+              className="text-sm text-slate-500 hover:text-slate-700 transition-colors active:scale-95"
             >
-              CS336 Course
+              Syllabus
             </a>
-          </nav>
+          </div>
+
+          <a
+            href={config.github_repo_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg text-sm font-bold transition-all active:scale-95 text-white"
+            style={{ backgroundColor: '#652fe7' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#5819db')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#652fe7')}
+          >
+            GitHub
+          </a>
         </div>
-      </div>
+      </nav>
     </header>
   );
 }

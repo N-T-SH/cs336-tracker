@@ -1,8 +1,17 @@
 'use client';
 
-import { SiteData, Note } from '@/lib/types';
+import { SiteData, Note, FocusTag } from '@/lib/types';
 import FocusPill from './FocusPill';
-import StreakGrid from './StreakGrid';
+
+// Solid fill colors per focus tag (for the progress squares)
+const FOCUS_COLORS: Record<FocusTag, string> = {
+  'lecture-notes':      '#3B82F6',
+  'review-assignment':  '#F59E0B',
+  'setup-environment':  '#64748B',
+  'code-prototype':     '#22C55E',
+  'study-prerequisite': '#A855F7',
+  'optimize-impl':      '#F43F5E',
+};
 
 interface DashboardProps {
   data: SiteData;
@@ -11,88 +20,144 @@ interface DashboardProps {
 
 export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
   const { config, stats, streak } = data;
-  
-  // Find today's note
   const today = new Date().toISOString().split('T')[0];
   const todayNote = data.notes.find(n => n.frontmatter.date === today);
-  
+
+  // Build per-day color data for progress squares
+  const noteByDate = new Map<string, FocusTag>();
+  for (const note of data.notes) {
+    noteByDate.set(note.frontmatter.date, note.frontmatter.focus);
+  }
+
+  const totalFullCells = Math.floor(config.total_days); // 33
+  const startDate = new Date(config.start_date + 'T00:00:00');
+
+  const dayCells: { dateStr: string; focus: FocusTag | undefined; isFuture: boolean }[] = [];
+  for (let i = 0; i < totalFullCells; i++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    dayCells.push({
+      dateStr,
+      focus: noteByDate.get(dateStr),
+      isFuture: dateStr > today,
+    });
+  }
+
+  const emptyColor = 'rgba(203,213,225,0.6)';
+
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      {/* About Block */}
-      <div className="mb-12 text-center">
-        <p className="text-lg text-slate-300 mb-2">{config.about_line_1}</p>
-        <p className="text-slate-400">{config.about_line_2}</p>
+    <section className="max-w-[700px] mx-auto px-6 py-12">
+      {/* About */}
+      <div className="mb-10">
+        <h1
+          className="text-3xl font-black text-[#2c2f30] mb-3 leading-tight"
+          style={{ letterSpacing: '-0.02em' }}
+        >
+          {config.about_line_1}
+        </h1>
+        <p className="text-[#595c5d] text-sm leading-relaxed">{config.about_line_2}</p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Progress Card */}
-        <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-4">
-            Progress
-          </h3>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-white">Day {stats.currentDay}</span>
-                <span className="text-slate-500">of {config.total_days}</span>
-              </div>
-              <div className="mt-2 h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 rounded-full"
-                  style={{ width: `${Math.min(100, (stats.currentDay / config.total_days) * 100)}%` }}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800">
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.percentComplete}%</p>
-                <p className="text-slate-400 text-sm">Notes filed</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.totalHours.toFixed(1)}</p>
-                <p className="text-slate-400 text-sm">Hours logged</p>
-              </div>
-            </div>
+
+      {/* Progress squares */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Timeline Progress
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            {stats.percentComplete}%
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-1 items-center">
+          {dayCells.map(({ dateStr, focus, isFuture }) => (
+            <div
+              key={dateStr}
+              className="progress-square"
+              style={{
+                backgroundColor:
+                  focus && !isFuture ? FOCUS_COLORS[focus] : emptyColor,
+              }}
+              title={dateStr}
+            />
+          ))}
+          {/* The 0.6-day half-square */}
+          <div className="progress-half-square" style={{ backgroundColor: emptyColor }} />
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div
+        className="flex gap-8 mb-10 pb-8"
+        style={{ borderBottom: '1px solid #e6e8ea' }}
+      >
+        <div>
+          <p className="text-2xl font-black text-[#2c2f30]">Day {stats.currentDay}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            of {config.total_days}
+          </p>
+        </div>
+        <div>
+          <p className="text-2xl font-black text-[#2c2f30]">{stats.totalHours.toFixed(1)}h</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            hours logged
+          </p>
+        </div>
+        <div>
+          <p className="text-2xl font-black text-[#2c2f30]">🔥 {streak.currentStreak}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            day streak
+          </p>
+        </div>
+        <div>
+          <p className="text-2xl font-black text-[#2c2f30]">{stats.totalNotes}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            notes filed
+          </p>
+        </div>
+      </div>
+
+      {/* Today's focus */}
+      {todayNote ? (
+        <div
+          className="bg-white p-5 rounded-xl card-aberration border border-slate-100"
+          style={{ borderColor: '#f1f5f9' }}
+        >
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              Today
+            </span>
+            <FocusPill focus={todayNote.frontmatter.focus} />
           </div>
-        </div>
-        
-        {/* Streak Card */}
-        <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-4">
-            Streak
+          <h3
+            className="text-lg font-black text-[#2c2f30] mb-1"
+            style={{ letterSpacing: '-0.01em' }}
+          >
+            {todayNote.frontmatter.title}
           </h3>
-          <StreakGrid streak={streak} />
+          <p className="text-[#595c5d] text-sm mb-3">
+            {todayNote.frontmatter.cs336_topic} · {todayNote.frontmatter.duration_hours}h
+          </p>
+          <button
+            onClick={() => {
+              onNoteSelect(todayNote);
+              document.getElementById('note-viewer')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="text-sm font-bold transition-colors"
+            style={{ color: '#652fe7' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#5819db')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#652fe7')}
+          >
+            Read today&apos;s note →
+          </button>
         </div>
-        
-        {/* Today's Focus Card */}
-        <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-4">
-            Today&apos;s Focus
-          </h3>
-          {todayNote ? (
-            <div className="space-y-3">
-              <p className="text-white font-semibold">{todayNote.frontmatter.title}</p>
-              <p className="text-slate-400 text-sm">{todayNote.frontmatter.cs336_topic}</p>
-              <div className="flex items-center gap-2">
-                <FocusPill focus={todayNote.frontmatter.focus} />
-                <span className="text-slate-500 text-sm">{todayNote.frontmatter.duration_hours}h</span>
-              </div>
-              <button
-                onClick={() => onNoteSelect(todayNote)}
-                className="text-blue-400 text-sm hover:text-blue-300 transition-colors"
-              >
-                Read today&apos;s note →
-              </button>
-            </div>
-          ) : (
-            <div className="text-slate-500">
-              <p>No note yet for today</p>
-              <p className="text-sm mt-1">Push a note to get started!</p>
-            </div>
-          )}
+      ) : (
+        <div className="text-[#595c5d] text-sm">
+          <p className="font-medium text-[#2c2f30]">No note yet for today.</p>
+          <p className="mt-1">Push a markdown file to the repo to log today&apos;s session.</p>
         </div>
-      </div>
+      )}
     </section>
   );
 }

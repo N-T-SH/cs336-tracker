@@ -1,21 +1,22 @@
 import { FocusTag } from '@/lib/types';
 
-const FOCUS_COLORS: Record<FocusTag, string> = {
-  'lecture-notes': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  'review-assignment': 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  'setup-environment': 'bg-slate-500/20 text-slate-400 border-slate-500/30',
-  'code-prototype': 'bg-green-500/20 text-green-400 border-green-500/30',
-  'study-prerequisite': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  'optimize-impl': 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+// Kinetic Manuscript pill color pairings
+const PILL_STYLES: Record<FocusTag, { bg: string; color: string }> = {
+  'lecture-notes':      { bg: 'rgba(38,230,255,0.2)', color: '#004f59' },
+  'review-assignment':  { bg: '#fef3c7',               color: '#92400e' },
+  'setup-environment':  { bg: '#f1f5f9',               color: '#475569' },
+  'code-prototype':     { bg: '#dcfce7',               color: '#166534' },
+  'study-prerequisite': { bg: 'rgba(169,143,255,0.25)', color: '#280072' },
+  'optimize-impl':      { bg: 'rgba(255,143,169,0.35)', color: '#66002b' },
 };
 
 const FOCUS_LABELS: Record<FocusTag, string> = {
-  'lecture-notes': 'Lecture Notes',
-  'review-assignment': 'Review / Assignment',
-  'setup-environment': 'Setup & Environment',
-  'code-prototype': 'Code Up Prototype',
-  'study-prerequisite': 'Study Prerequisite',
-  'optimize-impl': 'Optimize Implementation',
+  'lecture-notes':      'Lecture Notes',
+  'review-assignment':  'Review / Assignment',
+  'setup-environment':  'Setup & Environment',
+  'code-prototype':     'Code Prototype',
+  'study-prerequisite': 'Study Prereq',
+  'optimize-impl':      'Optimize Impl',
 };
 
 interface FocusPillProps {
@@ -23,9 +24,13 @@ interface FocusPillProps {
 }
 
 export default function FocusPill({ focus }: FocusPillProps) {
+  const style = PILL_STYLES[focus] ?? PILL_STYLES['lecture-notes'];
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${FOCUS_COLORS[focus] || FOCUS_COLORS['lecture-notes']}`}>
-      {FOCUS_LABELS[focus] || focus}
+    <span
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-transform hover:scale-105"
+      style={{ backgroundColor: style.bg, color: style.color }}
+    >
+      {FOCUS_LABELS[focus] ?? focus}
     </span>
   );
 }

@@ -2,12 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap');
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 2, 6, 23;
-  --background-end-rgb: 15, 23, 42;
+  --surface: #f5f6f7;
+  --on-surface: #2c2f30;
+  --warm-bg: #f7f6f2;
 }
 
 * {
@@ -24,13 +25,8 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--on-surface);
+  background-color: var(--warm-bg);
   font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
 }
@@ -42,19 +38,50 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(15, 23, 42);
+  background: #eff1f2;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(51, 65, 85);
+  background: #abadae;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(71, 85, 105);
+  background: #757778;
 }
 
-/* Code syntax highlighting */
+/* Chromatic title glitch effect */
+.title-chromatic {
+  text-shadow: 2px 0 0 rgba(255, 0, 0, 0.4), -2px 0 0 rgba(0, 255, 255, 0.4);
+}
+
+/* Card aberration shadow — the signature aesthetic touch */
+.card-aberration {
+  box-shadow: 0 0 0 1px #f1f5f9, 3px 0 0 rgba(255, 69, 0, 0.15), -1px 0 0 rgba(0, 255, 255, 0.1);
+}
+
+/* Chromatic teal → purple → pink gradient */
+.chromatic-gradient {
+  background: linear-gradient(135deg, #006571 0%, #652fe7 50%, #b60051 100%);
+}
+
+/* Progress day squares (8 × 8 px) */
+.progress-square {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Half square for the 0.6 fractional day */
+.progress-half-square {
+  width: 4px;
+  height: 8px;
+  border-radius: 1px 0 0 1px;
+  flex-shrink: 0;
+}
+
+/* ---- Code / syntax highlighting (inverse-surface blocks) ---- */
 pre code.hljs {
   background: transparent;
   padding: 0;
@@ -67,11 +94,11 @@ pre code.hljs {
 
 .hljs-keyword,
 .hljs-operator {
-  color: #f472b6;
+  color: #ff769b; /* tertiary-fixed-dim */
 }
 
 .hljs-string {
-  color: #a3e635;
+  color: #26e6ff; /* secondary-container */
 }
 
 .hljs-number,
@@ -80,18 +107,15 @@ pre code.hljs {
 }
 
 .hljs-comment {
-  color: #64748b;
+  color: #595c5d;
 }
 
-.hljs-function {
-  color: #60a5fa;
+.hljs-function,
+.hljs-title {
+  color: #00d7f0; /* secondary-fixed-dim */
 }
 
-.hljs-class {
-  color: #fbbf24;
-}
-
-/* Smooth scroll for anchor links */
-html {
-  scroll-behavior: smooth;
+.hljs-class,
+.hljs-built_in {
+  color: #a98fff; /* primary-container */
 }
