@@ -37,21 +37,17 @@ interface CellProps {
   onClick?: () => void;
 }
 
-function ActivityCell({ bg, shadow, opacity = 1, tooltip, isLast, cursor = 'default', onClick }: CellProps) {
+function ActivityCell({ bg, shadow, opacity = 1, tooltip, cursor = 'default', onClick }: CellProps) {
   return (
     <div
-      className="relative group"
+      className="flex-1 aspect-square relative group"
       style={{ cursor }}
       onClick={onClick}
     >
-      {/* The square */}
+      {/* The square — fills parent which is flex-1 aspect-square */}
       <div
-        className="w-6 h-6 rounded-sm transition-transform group-hover:scale-110"
-        style={{
-          background: bg,
-          boxShadow: shadow,
-          opacity,
-        }}
+        className="w-full h-full rounded-sm transition-transform group-hover:scale-110"
+        style={{ background: bg, boxShadow: shadow, opacity }}
       />
       {/* Tooltip */}
       <div
@@ -59,7 +55,6 @@ function ActivityCell({ bg, shadow, opacity = 1, tooltip, isLast, cursor = 'defa
         style={{ backgroundColor: '#0c0f10' }}
       >
         {tooltip}
-        {/* Arrow */}
         <span
           className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent"
           style={{ borderTopColor: '#0c0f10' }}
@@ -130,7 +125,9 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
           </span>
         </div>
 
-        <div className="space-y-1.5">
+        {/* Grid: label col + 7 equal cells. gap-2 is used for BOTH row spacing
+            (flex-col gap-2) and cell spacing (flex gap-2) → perfectly even H/V */}
+        <div className="flex flex-col gap-2">
           {rows.map((row, wi) => {
             const weekNum = wi + 1;
             const weekLabel = config.week_labels[String(weekNum)] ?? `Week ${weekNum}`;
@@ -141,42 +138,45 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
 
             return (
               <div key={wi} className="flex items-center gap-3">
-                {/* Week label — left column */}
-                <div className="w-28 shrink-0 text-right">
+                {/* Week label — fixed-width, single line, right-aligned */}
+                <div className="w-36 shrink-0 text-right">
                   <span
-                    className="text-[9px] font-bold uppercase tracking-wider text-slate-400 leading-tight"
-                    title={`Week ${weekNum}`}
+                    className="text-[8px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap"
+                    title={weekLabel}
                   >
                     {weekLabel}
                   </span>
                 </div>
 
-                {/* 7 day cells */}
-                <div className="flex gap-1.5">
+                {/* 7 day cells — flex-1 so they expand to fill remaining width
+                    gap-2 matches the outer flex-col gap-2 → even spacing */}
+                <div className="flex gap-2 flex-1">
                   {paddedRow.map((cell, ci) => {
                     if (cell === null) {
-                      // Empty padding cell (no 35th day)
-                      return (
-                        <div
-                          key={`pad-${ci}`}
-                          className="w-6 h-6 rounded-sm"
-                          style={{ backgroundColor: 'transparent' }}
-                        />
-                      );
+                      // Empty padding cell (transparent, still takes flex-1 space)
+                      return <div key={`pad-${ci}`} className="flex-1 aspect-square" />;
                     }
 
                     // Last cell — chromatic aberration "sprint end" marker
                     if (cell.isLast) {
                       return (
-                        <ActivityCell
-                          key={cell.dateStr}
-                          bg="linear-gradient(135deg, #006571 0%, #652fe7 50%, #b60051 100%)"
-                          shadow="2px 0 0 rgba(255,0,0,0.55), -2px 0 0 rgba(0,255,255,0.55)"
-                          opacity={0.75}
-                          tooltip="Day 34 — Sprint end (0.6 day)"
-                          isLast
-                          cursor="default"
-                        />
+                        <div key={cell.dateStr} className="flex-1 aspect-square relative group" style={{ cursor: 'default' }}>
+                          <div
+                            className="w-full h-full rounded-sm transition-transform group-hover:scale-110"
+                            style={{
+                              background: 'linear-gradient(135deg, #006571 0%, #652fe7 50%, #b60051 100%)',
+                              boxShadow: '2px 0 0 rgba(255,0,0,0.55), -2px 0 0 rgba(0,255,255,0.55)',
+                              opacity: 0.75,
+                            }}
+                          />
+                          <div
+                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded text-white text-[10px] font-medium whitespace-nowrap pointer-events-none z-20 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                            style={{ backgroundColor: '#0c0f10' }}
+                          >
+                            Day 34 — Sprint end (0.6 day)
+                            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#0c0f10' }} />
+                          </div>
+                        </div>
                       );
                     }
 
@@ -190,10 +190,8 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
                       ? FOCUS_COLORS[hasFocus]
                       : emptyColor;
 
-                    const border = isFuture ? '1px solid #dadddf' : 'none';
-
                     const tooltip = note
-                      ? `Day ${day} — ${note.frontmatter.title}\n${FOCUS_LABELS[note.frontmatter.focus]}`
+                      ? `Day ${day} — ${note.frontmatter.title} · ${FOCUS_LABELS[note.frontmatter.focus]}`
                       : isFuture
                       ? `Day ${day}`
                       : `Day ${day} — no note yet`;
@@ -202,7 +200,6 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
                       <ActivityCell
                         key={dateStr}
                         bg={bg}
-                        shadow={border ? undefined : undefined}
                         tooltip={tooltip}
                         cursor={note ? 'pointer' : 'default'}
                         onClick={note ? () => onNoteSelect(note) : undefined}
