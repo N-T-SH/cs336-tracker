@@ -4,7 +4,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { SiteData, Note, FocusTag } from '@/lib/types';
-import MiniTimeline from './MiniTimeline';
 import FocusPill from './FocusPill';
 
 const FOCUS_THUMB_BG: Record<FocusTag, string> = {
@@ -207,9 +206,6 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }:
       {/* ── Full note reader (shown when a note is selected) ── */}
       {selectedNote && (
         <>
-          {/* Mini-timeline scrubber */}
-          <MiniTimeline data={data} selectedNote={selectedNote} onNoteSelect={onNoteSelect} />
-
           <div className="max-w-[700px] mx-auto px-6 py-8">
             {/* Back button */}
             <button
