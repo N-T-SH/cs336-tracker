@@ -1,31 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Dashboard from '@/components/Dashboard';
-import Timeline from '@/components/Timeline';
 import NoteViewer from '@/components/NoteViewer';
 import { SiteData, Note } from '@/lib/types';
 import siteData from '../../public/data.json';
 
 export default function Home() {
   const data = siteData as SiteData;
+  // null = show the note feed; a Note = show full reader
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-
-  // Default to today's note (or most recent if none today)
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const todayNote = data.notes.find(n => n.frontmatter.date === today);
-    if (todayNote) {
-      setSelectedNote(todayNote);
-    } else if (data.notes.length > 0) {
-      setSelectedNote(data.notes[data.notes.length - 1]);
-    }
-  }, [data.notes]);
 
   const handleNoteSelect = (note: Note) => {
     setSelectedNote(note);
     document.getElementById('note-viewer')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleBack = () => {
+    setSelectedNote(null);
+    document.getElementById('notes')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -34,16 +28,11 @@ export default function Home() {
 
       <Dashboard data={data} onNoteSelect={handleNoteSelect} />
 
-      <Timeline
-        data={data}
-        selectedNote={selectedNote}
-        onNoteSelect={handleNoteSelect}
-      />
-
       <NoteViewer
         data={data}
         selectedNote={selectedNote}
         onNoteSelect={handleNoteSelect}
+        onBack={handleBack}
       />
 
       {/* Footer */}

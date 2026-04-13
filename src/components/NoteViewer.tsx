@@ -7,7 +7,6 @@ import { SiteData, Note, FocusTag } from '@/lib/types';
 import MiniTimeline from './MiniTimeline';
 import FocusPill from './FocusPill';
 
-// Soft background tints for note-card thumbnails
 const FOCUS_THUMB_BG: Record<FocusTag, string> = {
   'lecture-notes':      '#dbeafe',
   'review-assignment':  '#fef3c7',
@@ -26,16 +25,15 @@ const FOCUS_THUMB_ICON: Record<FocusTag, string> = {
   'optimize-impl':      '⚡',
 };
 
-/** Strip markdown to produce a plain-text excerpt. */
 function getExcerpt(content: string, maxLen = 220): string {
   const stripped = content
-    .replace(/^#+\s+.+$/gm, '')          // headings
-    .replace(/!\[.*?\]\(.*?\)/g, '')      // images
-    .replace(/\[(.+?)\]\(.*?\)/g, '$1')  // links
-    .replace(/\*\*(.+?)\*\*/g, '$1')     // bold
-    .replace(/\*(.+?)\*/g, '$1')         // italic
-    .replace(/`(.+?)`/g, '$1')           // inline code
-    .replace(/^[-*>]\s+/gm, '')          // list/blockquote markers
+    .replace(/^#+\s+.+$/gm, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[(.+?)\]\(.*?\)/g, '$1')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/^[-*>]\s+/gm, '')
     .replace(/\n+/g, ' ')
     .trim();
   return stripped.length > maxLen ? stripped.slice(0, maxLen) + '…' : stripped;
@@ -45,9 +43,10 @@ interface NoteViewerProps {
   data: SiteData;
   selectedNote: Note | null;
   onNoteSelect: (note: Note) => void;
+  onBack: () => void;
 }
 
-export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteViewerProps) {
+export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }: NoteViewerProps) {
   const { notes } = data;
 
   const currentIndex = selectedNote
@@ -61,35 +60,21 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteVie
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  // Custom markdown component overrides — light-theme aware, code blocks stay dark
   const mdComponents = {
     a: ({ ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-      <a
-        {...props}
-        className="underline transition-colors"
-        style={{ color: '#652fe7' }}
-        target="_blank"
-        rel="noopener noreferrer"
-      />
+      <a {...props} className="underline transition-colors" style={{ color: '#652fe7' }}
+        target="_blank" rel="noopener noreferrer" />
     ),
     code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
       const isInline = !className;
       return isInline ? (
-        <code
-          {...props}
-          className="px-1.5 py-0.5 rounded text-sm font-mono"
-          style={{ backgroundColor: '#f1f5f9', color: '#b60051' }}
-        >
+        <code {...props} className="px-1.5 py-0.5 rounded text-sm font-mono"
+          style={{ backgroundColor: '#f1f5f9', color: '#b60051' }}>
           {children}
         </code>
       ) : (
-        <pre
-          className="rounded-lg p-4 overflow-x-auto my-4"
-          style={{
-            backgroundColor: '#0c0f10',
-            borderLeft: '4px solid #b60051',
-          }}
-        >
+        <pre className="rounded-lg p-4 overflow-x-auto my-4"
+          style={{ backgroundColor: '#0c0f10', borderLeft: '4px solid #b60051' }}>
           <code {...props} className={`${className ?? ''} text-sm font-mono`}
             style={{ color: '#e2e8f0' }}>
             {children}
@@ -98,36 +83,19 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteVie
       );
     },
     blockquote: ({ ...props }: React.HTMLAttributes<HTMLElement>) => (
-      <blockquote
-        {...props}
-        className="pl-4 italic my-4 py-2 pr-4 rounded-r"
-        style={{
-          borderLeft: '4px solid #652fe7',
-          backgroundColor: '#f5f6f7',
-          color: '#595c5d',
-        }}
-      />
+      <blockquote {...props} className="pl-4 italic my-4 py-2 pr-4 rounded-r"
+        style={{ borderLeft: '4px solid #652fe7', backgroundColor: '#f5f6f7', color: '#595c5d' }} />
     ),
     h1: ({ ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <h1
-        {...props}
-        className="text-3xl font-black mt-8 mb-4"
-        style={{ color: '#2c2f30', letterSpacing: '-0.02em' }}
-      />
+      <h1 {...props} className="text-3xl font-black mt-8 mb-4"
+        style={{ color: '#2c2f30', letterSpacing: '-0.02em' }} />
     ),
     h2: ({ ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <h2
-        {...props}
-        className="text-2xl font-black mt-6 mb-3"
-        style={{ color: '#2c2f30', letterSpacing: '-0.02em' }}
-      />
+      <h2 {...props} className="text-2xl font-black mt-6 mb-3"
+        style={{ color: '#2c2f30', letterSpacing: '-0.02em' }} />
     ),
     h3: ({ ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <h3
-        {...props}
-        className="text-xl font-bold mt-5 mb-2"
-        style={{ color: '#2c2f30' }}
-      />
+      <h3 {...props} className="text-xl font-bold mt-5 mb-2" style={{ color: '#2c2f30' }} />
     ),
     ul: ({ ...props }: React.HTMLAttributes<HTMLUListElement>) => (
       <ul {...props} className="list-disc list-inside my-4 ml-4 space-y-1" style={{ color: '#595c5d' }} />
@@ -150,76 +118,89 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteVie
       <thead {...props} style={{ backgroundColor: '#f5f6f7' }} />
     ),
     th: ({ ...props }: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) => (
-      <th
-        {...props}
-        className="px-4 py-2 text-left text-sm font-semibold"
-        style={{ borderColor: '#dadddf', borderWidth: 1, borderStyle: 'solid', color: '#2c2f30' }}
-      />
+      <th {...props} className="px-4 py-2 text-left text-sm font-semibold"
+        style={{ border: '1px solid #dadddf', color: '#2c2f30' }} />
     ),
     td: ({ ...props }: React.TdHTMLAttributes<HTMLTableDataCellElement>) => (
-      <td
-        {...props}
-        className="px-4 py-2 text-sm"
-        style={{ borderColor: '#dadddf', borderWidth: 1, borderStyle: 'solid', color: '#595c5d' }}
-      />
+      <td {...props} className="px-4 py-2 text-sm"
+        style={{ border: '1px solid #dadddf', color: '#595c5d' }} />
     ),
   };
 
   return (
     <section style={{ borderTop: '1px solid #e6e8ea' }} id="note-viewer">
-      {/* Mini-timeline scrubber */}
-      <MiniTimeline data={data} selectedNote={selectedNote} onNoteSelect={onNoteSelect} />
+      {/* ── Note feed (always visible when no note selected) ── */}
+      {!selectedNote && (
+        <div className="max-w-[700px] mx-auto px-6 py-8" id="notes">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            All Notes
+          </span>
 
-      <div className="max-w-[700px] mx-auto px-6 py-8" id="notes">
-        {!selectedNote ? (
-          /* ── Note feed (no note selected) ── */
-          <div className="space-y-8">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              All Notes
-            </span>
+          <div className="mt-6 space-y-8">
+            {notes.length === 0 ? (
+              <p className="text-[#595c5d] text-sm">No notes yet. Push your first markdown file to get started.</p>
+            ) : (
+              [...notes].reverse().map(note => (
+                <article
+                  key={note.slug}
+                  className="bg-white p-6 rounded-xl card-aberration border hover:shadow-md transition-all cursor-pointer"
+                  style={{ borderColor: '#f1f5f9' }}
+                  onClick={() => onNoteSelect(note)}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Day {note.frontmatter.day}
+                    </span>
+                    <FocusPill focus={note.frontmatter.focus} />
+                  </div>
 
-            {[...notes].reverse().map(note => (
-              <article
-                key={note.slug}
-                className="bg-white p-6 rounded-xl card-aberration border hover:shadow-md transition-all cursor-pointer"
-                style={{ borderColor: '#f1f5f9' }}
-                onClick={() => onNoteSelect(note)}
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    Day {note.frontmatter.day}
-                  </span>
-                  <FocusPill focus={note.frontmatter.focus} />
-                </div>
+                  <div className="flex gap-6">
+                    <div className="flex-1 min-w-0">
+                      <h2
+                        className="text-xl font-black text-[#2c2f30] mb-2"
+                        style={{ letterSpacing: '-0.01em' }}
+                      >
+                        {note.frontmatter.title}
+                      </h2>
+                      <p className="text-[#595c5d] text-sm leading-relaxed line-clamp-4">
+                        {getExcerpt(note.content)}
+                      </p>
+                    </div>
 
-                <div className="flex gap-6">
-                  <div className="flex-1">
-                    <h2
-                      className="text-xl font-black text-[#2c2f30] mb-2"
-                      style={{ letterSpacing: '-0.01em' }}
+                    <div
+                      className="w-24 h-24 shrink-0 overflow-hidden rounded-lg flex items-center justify-center text-3xl select-none"
+                      style={{ backgroundColor: FOCUS_THUMB_BG[note.frontmatter.focus] }}
+                      aria-hidden="true"
                     >
-                      {note.frontmatter.title}
-                    </h2>
-                    <p className="text-[#595c5d] text-sm leading-relaxed line-clamp-4">
-                      {getExcerpt(note.content)}
-                    </p>
+                      {FOCUS_THUMB_ICON[note.frontmatter.focus]}
+                    </div>
                   </div>
-
-                  {/* Thumbnail */}
-                  <div
-                    className="w-24 h-24 shrink-0 overflow-hidden rounded-lg flex items-center justify-center text-3xl select-none"
-                    style={{ backgroundColor: FOCUS_THUMB_BG[note.frontmatter.focus] }}
-                    aria-hidden="true"
-                  >
-                    {FOCUS_THUMB_ICON[note.frontmatter.focus]}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))
+            )}
           </div>
-        ) : (
-          /* ── Full note viewer ── */
-          <div>
+        </div>
+      )}
+
+      {/* ── Full note reader (shown when a note is selected) ── */}
+      {selectedNote && (
+        <>
+          {/* Mini-timeline scrubber */}
+          <MiniTimeline data={data} selectedNote={selectedNote} onNoteSelect={onNoteSelect} />
+
+          <div className="max-w-[700px] mx-auto px-6 py-8">
+            {/* Back button */}
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1.5 text-sm mb-8 transition-colors"
+              style={{ color: '#595c5d' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#2c2f30')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#595c5d')}
+            >
+              <span>←</span>
+              <span className="font-medium">All notes</span>
+            </button>
+
             {/* Note header */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
@@ -258,7 +239,7 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteVie
               </ReactMarkdown>
             </article>
 
-            {/* Prev / Next navigation */}
+            {/* Prev / Next */}
             <div
               className="mt-12 pt-8 flex justify-between"
               style={{ borderTop: '1px solid #e6e8ea' }}
@@ -290,8 +271,8 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect }: NoteVie
               ) : <div />}
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </section>
   );
 }
