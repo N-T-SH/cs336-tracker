@@ -26,7 +26,7 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: '#f7f6f2' }}>
       <Header config={data.config} />
 
-      <Dashboard data={data} onNoteSelect={handleNoteSelect} />
+      <Dashboard data={data} onNoteSelect={handleNoteSelect} isNoteOpen={selectedNote !== null} />
 
       <NoteViewer
         data={data}

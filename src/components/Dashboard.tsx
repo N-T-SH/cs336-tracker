@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { SiteData, Note } from '@/lib/types';
 import FocusPill from './FocusPill';
 
@@ -81,12 +82,16 @@ function Tooltip({ lines }: { lines: string[] }) {
 interface DashboardProps {
   data: SiteData;
   onNoteSelect: (note: Note) => void;
+  isNoteOpen?: boolean;
 }
 
-export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
+export default function Dashboard({ data, onNoteSelect, isNoteOpen = false }: DashboardProps) {
   const { config, stats } = data;
   const today = localDateStr(new Date());
   const todayNote = data.notes.find(n => n.frontmatter.date === today);
+
+  const [gridOpen, setGridOpen] = useState(!isNoteOpen);
+  useEffect(() => { setGridOpen(!isNoteOpen); }, [isNoteOpen]);
 
   const noteByDate = new Map<string, Note>();
   for (const note of data.notes) {
@@ -126,16 +131,24 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
       {/* ── Activity grid ─────────────────────────────────────────────────── */}
       <div className="mb-10 pb-10" style={{ borderBottom: '1px solid #e6e8ea' }}>
         <div className="flex justify-between items-center mb-4">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-            Timeline Progress
-          </span>
+          <button
+            onClick={() => setGridOpen(o => !o)}
+            className="flex items-center gap-1.5 group"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">
+              Timeline Progress
+            </span>
+            <span className="text-[10px] text-slate-300 group-hover:text-slate-400 transition-colors select-none">
+              {gridOpen ? '▲' : '▼'}
+            </span>
+          </button>
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Day {stats.currentDay} of {config.total_days}
           </span>
         </div>
 
         {/* gap-[3px] on both axes → GitHub-style even spacing */}
-        <div className="flex flex-col gap-[3px]">
+        {gridOpen && <div className="flex flex-col gap-[3px]">
           {rows.map((row, wi) => {
             const weekLabel = config.week_labels[String(wi + 1)] ?? `Week ${wi + 1}`;
             const paddedRow: (typeof cells[0] | null)[] = [...row];
@@ -222,11 +235,11 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
               </div>
             );
           })}
-        </div>
+        </div>}
       </div>
 
       {/* ── Today's focus ────────────────────────────────────────────────── */}
-      {todayNote ? (
+      {todayNote && (
         <div className="bg-white p-5 rounded-xl card-aberration" style={{ border: '1px solid #f1f5f9' }}>
           <div className="flex justify-between items-start mb-3">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Today</span>
@@ -249,11 +262,6 @@ export default function Dashboard({ data, onNoteSelect }: DashboardProps) {
             Read today&apos;s note →
           </button>
         </div>
-      ) : (
-        <p className="text-sm text-[#595c5d]">
-          <span className="font-medium text-[#2c2f30]">No note yet for today.</span>{' '}
-          Push a markdown file to log today&apos;s session.
-        </p>
       )}
     </section>
   );
