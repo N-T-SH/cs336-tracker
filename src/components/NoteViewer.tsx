@@ -143,36 +143,58 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }:
               [...notes].reverse().map(note => (
                 <article
                   key={note.slug}
-                  className="bg-white p-6 rounded-xl card-aberration border hover:shadow-md transition-all cursor-pointer"
+                  className="bg-white rounded-xl card-aberration border overflow-hidden hover:shadow-md transition-all cursor-pointer"
                   style={{ borderColor: '#f1f5f9' }}
                   onClick={() => onNoteSelect(note)}
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                      Day {note.frontmatter.day}
-                    </span>
-                    <FocusPill focus={note.frontmatter.focus} />
-                  </div>
-
-                  <div className="flex gap-6">
-                    <div className="flex-1 min-w-0">
-                      <h2
-                        className="text-xl font-black text-[#2c2f30] mb-2"
-                        style={{ letterSpacing: '-0.01em' }}
-                      >
-                        {note.frontmatter.title}
-                      </h2>
-                      <p className="text-[#595c5d] text-sm leading-relaxed line-clamp-4">
-                        {getExcerpt(note.content)}
-                      </p>
+                  <div className="flex min-h-[280px]">
+                    {/* Left 2/3 — content */}
+                    <div className="flex-1 p-6 flex flex-col justify-between min-w-0">
+                      <div>
+                        <div className="flex justify-between items-start mb-4">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            Day {note.frontmatter.day}
+                          </span>
+                          <FocusPill focus={note.frontmatter.focus} />
+                        </div>
+                        <h2
+                          className="text-xl font-black text-[#2c2f30] mb-3"
+                          style={{ letterSpacing: '-0.01em' }}
+                        >
+                          {note.frontmatter.title}
+                        </h2>
+                        <p className="text-[#595c5d] text-sm leading-relaxed line-clamp-6">
+                          {getExcerpt(note.content, 360)}
+                        </p>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2">
+                        <span className="text-[10px] text-slate-400 font-medium">
+                          {note.frontmatter.cs336_topic}
+                        </span>
+                        <span style={{ color: '#abadae' }}>·</span>
+                        <span className="text-[10px] text-slate-400">
+                          {note.frontmatter.duration_hours}h
+                        </span>
+                      </div>
                     </div>
 
-                    <div
-                      className="w-24 h-24 shrink-0 overflow-hidden rounded-lg flex items-center justify-center text-3xl select-none"
-                      style={{ backgroundColor: FOCUS_THUMB_BG[note.frontmatter.focus] }}
-                      aria-hidden="true"
-                    >
-                      {FOCUS_THUMB_ICON[note.frontmatter.focus]}
+                    {/* Right 1/3 — cover image or focus icon */}
+                    <div className="w-1/3 shrink-0 overflow-hidden">
+                      {note.frontmatter.cover_image ? (
+                        <img
+                          src={note.frontmatter.cover_image}
+                          alt={note.frontmatter.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center text-5xl select-none"
+                          style={{ backgroundColor: FOCUS_THUMB_BG[note.frontmatter.focus] }}
+                          aria-hidden="true"
+                        >
+                          {FOCUS_THUMB_ICON[note.frontmatter.focus]}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </article>
