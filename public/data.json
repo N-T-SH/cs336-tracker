@@ -1,0 +1,255 @@
+{
+  "config": {
+    "site_title": "CS336 × 33.6",
+    "about_line_1": "Working through Stanford CS336 — Language Modeling from Scratch — in 33.6 days.",
+    "about_line_2": "Documenting every session publicly as I build a language model from the ground up.",
+    "start_date": "2025-06-01",
+    "total_days": 33.6,
+    "expected_note_count": 33,
+    "github_repo_url": "https://github.com/username/cs336-notes",
+    "cs336_course_url": "https://stanford-cs336.github.io/spring2025/",
+    "week_labels": {
+      "1": "Tokenization & Data",
+      "2": "Transformer Architecture",
+      "3": "Training & Optimization",
+      "4": "Scaling & Evaluation",
+      "5": "Buffer / Review"
+    }
+  },
+  "notes": [
+    {
+      "slug": "2025-06-01_tokenization-bpe",
+      "frontmatter": {
+        "title": "BPE Tokenization",
+        "date": "2025-06-01",
+        "day": 1,
+        "week": 1,
+        "tags": [
+          "lecture-notes",
+          "tokenization"
+        ],
+        "focus": "lecture-notes",
+        "duration_hours": 3,
+        "cs336_topic": "Tokenization & Data"
+      },
+      "content": "\n# BPE Tokenization\n\nToday I learned about Byte Pair Encoding (BPE), the algorithm used by most modern language models for tokenization.\n\n## Key Concepts\n\n- **Unicode handling**: Breaking text into bytes first, then merging\n- **Vocabulary size trade-offs**: More tokens = shorter sequences but larger embedding matrix\n- **Special tokens**: `[BOS]`, `[EOS]`, `[PAD]`, `[UNK]`\n\n## Implementation Notes\n\nThe basic algorithm:\n1. Start with character-level tokens (bytes)\n2. Count all adjacent pairs\n3. Merge the most frequent pair\n4. Repeat until vocabulary size reached\n\n```python\nimport re\nfrom collections import defaultdict\n\ndef get_stats(vocab):\n    pairs = defaultdict(int)\n    for word, freq in vocab.items():\n        symbols = word.split()\n        for i in range(len(symbols) - 1):\n            pairs[(symbols[i], symbols[i+1])] += freq\n    return pairs\n```\n\n## Next Steps\n\n- Implement BPE training on a small corpus\n- Compare GPT-2 tokenizer vs custom trained one\n"
+    },
+    {
+      "slug": "2025-06-02_data-pipeline",
+      "frontmatter": {
+        "title": "Building the Data Pipeline",
+        "date": "2025-06-02",
+        "day": 2,
+        "week": 1,
+        "tags": [
+          "code-prototype",
+          "data"
+        ],
+        "focus": "code-prototype",
+        "duration_hours": 4,
+        "cs336_topic": "Tokenization & Data"
+      },
+      "content": "\n# Building the Data Pipeline\n\nSetting up the data loading and preprocessing pipeline for training.\n\n## Components\n\n| Component | Purpose | Status |\n|-----------|---------|--------|\n| WebDataset | Streaming large datasets | ✅ Done |\n| Tokenizer | BPE encoding | ✅ Done |\n| Dataloader | Batching & shuffling | 🔄 In Progress |\n\n## Code\n\n```python\nfrom torch.utils.data import IterableDataset, DataLoader\n\nclass TokenizedDataset(IterableDataset):\n    def __init__(self, url, tokenizer, seq_len=1024):\n        self.url = url\n        self.tokenizer = tokenizer\n        self.seq_len = seq_len\n    \n    def __iter__(self):\n        for sample in self.stream_samples():\n            tokens = self.tokenizer.encode(sample['text'])\n            # Chunk into sequences\n            for i in range(0, len(tokens) - self.seq_len, self.seq_len):\n                yield tokens[i:i + self.seq_len + 1]\n```\n\n## Memory Considerations\n\nStreaming is essential for large datasets. Cannot load entire dataset into RAM.\n"
+    },
+    {
+      "slug": "2025-06-03_transformer-basics",
+      "frontmatter": {
+        "title": "Transformer Architecture Basics",
+        "date": "2025-06-03",
+        "day": 3,
+        "week": 1,
+        "tags": [
+          "lecture-notes",
+          "transformers",
+          "attention"
+        ],
+        "focus": "lecture-notes",
+        "duration_hours": 2.5,
+        "cs336_topic": "Transformer Architecture"
+      },
+      "content": "\n# Transformer Architecture Basics\n\nReviewing the original \"Attention Is All You Need\" paper and modern adaptations.\n\n## Core Components\n\n1. **Multi-Head Self-Attention**: Parallel attention mechanisms\n2. **Feed-Forward Networks**: Position-wise transformations\n3. **Layer Norm & Residuals**: Stabilizing deep networks\n\n> [!NOTE]\n> The original paper used Post-LN, but modern LLMs typically use Pre-LN for better stability.\n\n## Attention Mechanism\n\n$$\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$\n\n## Implementation Sketch\n\n```python\nimport torch\nimport torch.nn as nn\nimport torch.nn.functional as F\n\nclass Attention(nn.Module):\n    def __init__(self, d_model, n_heads):\n        super().__init__()\n        assert d_model % n_heads == 0\n        self.n_heads = n_heads\n        self.d_head = d_model // n_heads\n        \n        self.w_qkv = nn.Linear(d_model, 3 * d_model, bias=False)\n        self.w_o = nn.Linear(d_model, d_model, bias=False)\n    \n    def forward(self, x):\n        B, T, C = x.shape\n        qkv = self.w_qkv(x).split(C, dim=-1)\n        q, k, v = [y.view(B, T, self.n_heads, self.d_head).transpose(1, 2) for y in qkv]\n        \n        # Scaled dot-product attention\n        attn = F.scaled_dot_product_attention(q, k, v, is_causal=True)\n        \n        attn = attn.transpose(1, 2).contiguous().view(B, T, C)\n        return self.w_o(attn)\n```\n\n## Reading\n\n- [[Attention Is All You Need]] — Original transformer paper\n- [[LLaMA paper]] — Modern efficient architecture\n"
+    }
+  ],
+  "streak": {
+    "currentStreak": 0,
+    "longestStreak": 3,
+    "dailyStatus": [
+      {
+        "date": "2025-05-31",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-01",
+        "hasNote": true,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-02",
+        "hasNote": true,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-03",
+        "hasNote": true,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-04",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-05",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-06",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-07",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-08",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-09",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-10",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-11",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-12",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-13",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-14",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-15",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-16",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-17",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-18",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-19",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-20",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-21",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-22",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-23",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-24",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-25",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-26",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-27",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-28",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-29",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-06-30",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-07-01",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-07-02",
+        "hasNote": false,
+        "isFuture": false
+      },
+      {
+        "date": "2025-07-03",
+        "hasNote": false,
+        "isFuture": false
+      }
+    ]
+  },
+  "stats": {
+    "totalNotes": 3,
+    "totalHours": 9.5,
+    "percentComplete": 9,
+    "currentDay": 34
+  }
+}

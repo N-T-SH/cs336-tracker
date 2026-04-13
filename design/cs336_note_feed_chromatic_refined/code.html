@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#eff1f2",
+                        "inverse-on-surface": "#9b9d9e",
+                        "outline": "#757778",
+                        "surface-dim": "#d1d5d7",
+                        "error-dim": "#9f0519",
+                        "primary-dim": "#5819db",
+                        "primary": "#652fe7",
+                        "surface-tint": "#652fe7",
+                        "on-secondary-fixed-variant": "#005964",
+                        "primary-container": "#a98fff",
+                        "on-error-container": "#570008",
+                        "secondary": "#006571",
+                        "inverse-primary": "#9a7bff",
+                        "on-tertiary-fixed": "#380014",
+                        "on-tertiary-fixed-variant": "#770033",
+                        "on-secondary-container": "#004f59",
+                        "surface-container-high": "#e0e3e4",
+                        "secondary-dim": "#005863",
+                        "on-background": "#2c2f30",
+                        "primary-fixed": "#a98fff",
+                        "on-secondary-fixed": "#003a42",
+                        "inverse-surface": "#0c0f10",
+                        "tertiary-container": "#ff8fa9",
+                        "secondary-fixed-dim": "#00d7f0",
+                        "on-primary-container": "#280072",
+                        "tertiary-fixed": "#ff8fa9",
+                        "surface-container": "#e6e8ea",
+                        "on-tertiary-container": "#66002b",
+                        "on-tertiary": "#ffeff0",
+                        "secondary-fixed": "#26e6ff",
+                        "surface-bright": "#f5f6f7",
+                        "on-error": "#ffefee",
+                        "secondary-container": "#26e6ff",
+                        "on-secondary": "#d8f8ff",
+                        "on-primary-fixed": "#000000",
+                        "surface-container-highest": "#dadddf",
+                        "tertiary-dim": "#a00047",
+                        "error": "#b31b25",
+                        "tertiary-fixed-dim": "#ff769b",
+                        "on-primary": "#f7f0ff",
+                        "outline-variant": "#abadae",
+                        "primary-fixed-dim": "#9c7eff",
+                        "surface": "#f5f6f7",
+                        "on-surface-variant": "#595c5d",
+                        "on-surface": "#2c2f30",
+                        "error-container": "#fb5151",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f5f6f7",
+                        "tertiary": "#b60051",
+                        "on-primary-fixed-variant": "#32008a",
+                        "surface-variant": "#dadddf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chromatic-gradient {
+            background: linear-gradient(135deg, #006571 0%, #652fe7 50%, #b60051 100%);
+        }
+        .warm-bg {
+            background-color: #f7f6f2;
+        }
+        .title-chromatic {
+            text-shadow: 2px 0 0 rgba(255,0,0,0.4), -2px 0 0 rgba(0,255,255,0.4);
+        }
+        .card-aberration {
+            box-shadow: 0 0 0 1px #f1f5f9, 3px 0 0 rgba(255, 69, 0, 0.15), -1px 0 0 rgba(0, 255, 255, 0.1);
+        }
+        .progress-square {
+            width: 8px;
+            height: 8px;
+            border-radius: 1px;
+        }
+        .progress-half-square {
+            width: 4px;
+            height: 8px;
+            border-radius: 1px 0 0 1px;
+        }
+    </style>
+</head>
+<body class="warm-bg text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-white shadow-sm">
+<nav class="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-2">
+<span class="text-2xl font-black tracking-tighter text-slate-900 title-chromatic">CS336 × 33.6</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-sans tracking-tight text-sm text-purple-600 font-bold border-b-2 border-purple-600 active:scale-95 transition-transform" href="#">Notes</a>
+<a class="font-sans tracking-tight text-sm text-slate-500 hover:bg-slate-50 transition-colors duration-200 active:scale-95 transition-transform" href="#">Syllabus</a>
+<a class="font-sans tracking-tight text-sm text-slate-500 hover:bg-slate-50 transition-colors duration-200 active:scale-95 transition-transform" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-cyan-500 hover:bg-slate-50 p-2 rounded-full transition-colors">code</button>
+<button class="bg-primary hover:bg-primary-dim text-on-primary px-4 py-2 rounded-lg font-sans tracking-tight text-sm font-bold active:scale-95 transition-all">GitHub</button>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-[700px] mx-auto px-6 py-12">
+<!-- Progress Section (Squares Row) -->
+<section class="mb-12">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Timeline Progress</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">9%</span>
+</div>
+<div class="flex flex-wrap gap-1 items-center">
+<!-- Completed Squares (Approx 9% of 33.6 is ~3 squares) -->
+<div class="progress-square" style="background-color: #00d7f0;"></div>
+<div class="progress-square" style="background-color: #652fe7;"></div>
+<div class="progress-square" style="background-color: #ff769b;"></div>
+<!-- Remaining Squares (Empty) -->
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<div class="progress-square bg-slate-200/60"></div>
+<!-- The 33.6 half square -->
+<div class="progress-half-square bg-slate-200/60"></div>
+</div>
+</section>
+<!-- Note Cards List -->
+<div class="space-y-8">
+<!-- Day 3 Card -->
+<article class="bg-white p-6 rounded-xl card-aberration border border-slate-100 hover:shadow-md transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Day 3</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider">NLP</span>
+</div>
+<div class="flex gap-6">
+<div class="flex-1">
+<h2 class="text-xl font-headline font-black tracking-tight text-on-surface mb-2">BPE Tokenization</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed line-clamp-4">
+                        Byte Pair Encoding (BPE) is the backbone of modern LLM vocabularies. It bridges the gap between character-level and word-level representations by iteratively merging the most frequent adjacent pairs. This allows the model to handle out-of-vocabulary words effectively.
+                    </p>
+</div>
+<div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg bg-slate-100 border border-slate-50">
+<img alt="BPE Visualization" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0uiTKNW3ZpVZ4M9xCpjqx9J7K40kb1LWmjGeRCUnc1GCb34BiaDh0cp7tehFDY4V67q4AczqXTgkcsRZ-P3I6N4eCCeFyoinqmM_mzKMTDlKBX5E4FkrVrl82Zj5et2-LG4ISfRzBwDdB1fA-iRwn3BlkJPpAfybJnJu2Ps1yrf5H85Ek0yVTQmFiM8oODinQDh53tiSwu89oFz0fJVIty4ogjLtpaAUCMTToSWvg7n_YNYyHrlgyP98UWu7F2ob2Mn_slp4bd6UIA"/>
+</div>
+</div>
+</article>
+<!-- Day 2 Card -->
+<article class="bg-white p-6 rounded-xl card-aberration border border-slate-100 hover:shadow-md transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Day 2</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-wider">Architecture</span>
+</div>
+<div class="flex gap-6">
+<div class="flex-1">
+<h2 class="text-xl font-headline font-black tracking-tight text-on-surface mb-2">Attention Mechanisms</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed line-clamp-4">
+                        Deep dive into Scaled Dot-Product Attention and Multi-Head Attention. We explore how transformers weigh the importance of different words in a sequence relative to each other, forming the basis of context awareness in modern language models.
+                    </p>
+</div>
+<div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg bg-slate-100 border border-slate-50">
+<div class="w-full h-full chromatic-gradient opacity-20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">psychology</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Day 1 Card -->
+<article class="bg-white p-6 rounded-xl card-aberration border border-slate-100 hover:shadow-md transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Day 1</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider">Foundations</span>
+</div>
+<div class="flex gap-6">
+<div class="flex-1">
+<h2 class="text-xl font-headline font-black tracking-tight text-on-surface mb-2">The History of LLMs</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed line-clamp-4">
+                        From RNNs and LSTMs to the seminal 'Attention is All You Need' paper. We track the evolution of sequence modeling and how hardware acceleration paved the way for the current era of generative pre-trained transformers.
+                    </p>
+</div>
+<div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg bg-slate-100 border border-slate-50">
+<div class="w-full h-full bg-cyan-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-cyan-600 text-3xl">history_edu</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Site Footer -->
+<footer class="w-full py-12 bg-white/50 mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-[1440px] mx-auto gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-bold text-slate-900">KINETIC MANUSCRIPT</span>
+<p class="font-sans text-[10px] uppercase tracking-widest text-slate-400">© 2024 Kinetic Manuscript. All rights reserved.</p>
+</div>
+<div class="flex gap-6">
+<a class="font-sans text-[10px] uppercase tracking-widest text-slate-400 hover:text-pink-500 transition-colors" href="#">Documentation</a>
+<a class="font-sans text-[10px] uppercase tracking-widest text-slate-400 hover:text-pink-500 transition-colors" href="#">Privacy</a>
+<a class="font-sans text-[10px] uppercase tracking-widest text-slate-400 hover:text-pink-500 transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>
