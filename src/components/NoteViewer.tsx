@@ -167,10 +167,6 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }:
                         </p>
                       </div>
                       <div className="mt-4 flex items-center gap-2">
-                        <span className="text-[10px] text-slate-400 font-medium">
-                          {note.frontmatter.cs336_topic}
-                        </span>
-                        <span style={{ color: '#abadae' }}>·</span>
                         <span className="text-[10px] text-slate-400">
                           {note.frontmatter.duration_hours}h
                         </span>
@@ -239,11 +235,6 @@ export default function NoteViewer({ data, selectedNote, onNoteSelect, onBack }:
                 {selectedNote.frontmatter.title}
               </h1>
 
-              {selectedNote.frontmatter.cs336_topic && (
-                <p className="mt-2 text-sm" style={{ color: '#595c5d' }}>
-                  {selectedNote.frontmatter.cs336_topic}
-                </p>
-              )}
             </div>
 
             {/* Markdown body */}

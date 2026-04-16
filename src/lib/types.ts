@@ -6,7 +6,6 @@ export interface NoteFrontmatter {
   tags: string[];
   focus: FocusTag;
   duration_hours: number;
-  cs336_topic: string;
   /** Optional path to a cover image, e.g. /images/day3-bpe.png */
   cover_image?: string;
 }

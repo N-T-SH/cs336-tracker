@@ -208,7 +208,7 @@ export default function Dashboard({ data, onNoteSelect, isNoteOpen = false }: Da
                     const tLines: string[] = [`Day ${day} · ${labelDate(dateStr)}`];
                     if (note) {
                       tLines.push(note.frontmatter.title);
-                      tLines.push(`${note.frontmatter.cs336_topic} · ${note.frontmatter.duration_hours}h`);
+                      tLines.push(`${note.frontmatter.duration_hours}h`);
                     } else if (isFuture) {
                       tLines.push('Coming up');
                     } else if (isToday) {
@@ -249,7 +249,7 @@ export default function Dashboard({ data, onNoteSelect, isNoteOpen = false }: Da
             {todayNote.frontmatter.title}
           </h3>
           <p className="text-[#595c5d] text-sm mb-3">
-            {todayNote.frontmatter.cs336_topic} · {todayNote.frontmatter.duration_hours}h
+            {todayNote.frontmatter.duration_hours}h
           </p>
           <button
             onClick={() => {
